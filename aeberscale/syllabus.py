@@ -254,6 +254,12 @@ class Phrygian(Scale):
     _notes_nontransposed = ["C", "Db", "Eb", "F", "G", "Ab", "Bb"]
 
 
+class PhrygianMajor(Scale):
+    name = "phrygian major"
+    family = "minor"
+    _notes_nontransposed = ["C", "Db", "E", "F", "G", "Ab", "Bb"]
+
+
 class Aeolian(Scale):
     name = "aeolian"
     family = "minor"
@@ -315,4 +321,5 @@ SCALE_SYLLABUS = [
     LocrianSharp2,
     BebopHalfDiminished,
     Diminished8Tone,
+    PhrygianMajor
 ]
