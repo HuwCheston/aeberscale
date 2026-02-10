@@ -9,7 +9,7 @@ Scale names and notes extracted from the Scale Syllabus and converted to a base 
 
 from typing import List, Union
 
-from deep_pianist_identification.aeberscale.utils import NOTE_NAMES, NOTE_NUMBERS
+from aeberscale.utils import NOTE_NAMES, NOTE_NUMBERS
 
 
 class Scale:
@@ -25,7 +25,9 @@ class Scale:
         if not isinstance(root, str):
             raise ValueError(f"Expected `root` to be a string, but got {type(root)}")
         elif not root.lower() in [n.lower() for n in NOTE_NAMES.keys()]:
-            raise ValueError(f"Root note {root} is invalid (must be one of {', '.join(NOTE_NAMES.keys())}")
+            raise ValueError(
+                f"Root note {root} is invalid (must be one of {', '.join(NOTE_NAMES.keys())}"
+            )
         self.root = root
         self.root_number = NOTE_NAMES[root]
 
@@ -53,9 +55,13 @@ class Scale:
         if isinstance(note_name_or_number, int):
             # sanity checking inputs
             if note_name_or_number > 12:
-                raise ValueError(f"Note number must be below 12, but got {note_name_or_number}")
+                raise ValueError(
+                    f"Note number must be below 12, but got {note_name_or_number}"
+                )
             elif note_name_or_number < -1:
-                raise ValueError(f"Note number must be above 0, but got {note_name_or_number}")
+                raise ValueError(
+                    f"Note number must be above 0, but got {note_name_or_number}"
+                )
             else:
                 # return diatonic scale degree
                 try:
@@ -65,7 +71,11 @@ class Scale:
                     return None
 
         elif isinstance(note_name_or_number, str):
-            matches = [n for n, i in enumerate(self.notes) if NOTE_NAMES[i] == NOTE_NAMES[note_name_or_number]]
+            matches = [
+                n
+                for n, i in enumerate(self.notes)
+                if NOTE_NAMES[i] == NOTE_NAMES[note_name_or_number]
+            ]
             # no matches: note is not contained in scale, so return None
             if len(matches) == 0:
                 return None
@@ -74,7 +84,9 @@ class Scale:
                 return matches[0]
 
         else:
-            raise ValueError(f"Expected either str or int, but got {type(note_name_or_number)}")
+            raise ValueError(
+                f"Expected either str or int, but got {type(note_name_or_number)}"
+            )
 
     def __repr__(self) -> str:
         return self.root + " " + self.name

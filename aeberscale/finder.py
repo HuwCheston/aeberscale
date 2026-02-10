@@ -59,8 +59,10 @@ def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Sca
         raise ValueError("Cannot find scale for passage with zero notes!")
 
     elif len(notes) != len(durations):
-        raise ValueError(f"Must have exactly one duration for each note "
-                         f"(got {len(notes)} notes, {len(durations)} durations).")
+        raise ValueError(
+            f"Must have exactly one duration for each note "
+            f"(got {len(notes)} notes, {len(durations)} durations)."
+        )
 
     if not all(isinstance(n, (str, int)) for n in notes):
         raise TypeError("Notes must be either strings or integers")
@@ -104,7 +106,9 @@ def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Sca
 if __name__ == "__main__":
     from pretty_midi import PrettyMIDI
 
-    pm = PrettyMIDI("../../data/raw/pijama/evansb-likesomeoneinlove-unaccompanied-xxxx-awtxq598/piano_midi.mid")
+    pm = PrettyMIDI(
+        "../../data/raw/pijama/evansb-likesomeoneinlove-unaccompanied-xxxx-awtxq598/piano_midi.mid"
+    )
     nots = [p.pitch for p in pm.instruments[0].notes]
     durs = [p.duration for p in pm.instruments[0].notes]
 
