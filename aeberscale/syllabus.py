@@ -98,7 +98,10 @@ class Scale:
         return self.n_notes
 
     def notes_to_diatonic_scale_steps(self, notes: List[Union[str, int]]) -> List[int]:
-        pass
+        if all(isinstance(n, (str, int)) for n in notes):
+            return [self[g] for g in notes]
+        else:
+            raise TypeError("Expected input to be either a list of strings or integers")
 
 
 class Major(Scale):

@@ -20,7 +20,7 @@ The process is as follows:
 import math
 from typing import List, Optional, Type, Union
 
-from aeberscale import SCALE_SYLLABUS, Scale
+from aeberscale.syllabus import SCALE_SYLLABUS, Scale
 from aeberscale.utils import NOTE_NAMES, NOTE_NUMBERS
 
 
