@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aeberscale"
-version = "0.1"
+version = "0.1.1"
 description = "A simple key-finding algorithm designed for jazz"
 authors = ["Huw Cheston <h.cheston@qmul.ac.uk>"]
 license = "MIT"
@@ -21,6 +21,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.10"
 
+[tool.poetry.group.dev.dependencies]
 pytest = "*"
 pre-commit = "*"
 black = "*"
@@ -29,3 +30,7 @@ flake8 = "*"
 twine = "*"
 build = "*"
 coverage = "^7.13.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
