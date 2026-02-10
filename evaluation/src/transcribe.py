@@ -15,9 +15,9 @@ from basic_pitch.inference import Model, predict
 from piano_transcription_inference import PianoTranscription
 from piano_transcription_inference import sample_rate as kong_sr
 
-SAMPLE_RATE = 44100    # confirmed from FFprobe of apple music recordings
+SAMPLE_RATE = 44100  # confirmed from FFprobe of apple music recordings
 DEVICE = "cpu"
-OFFSET = 7    # removes Jamey's speaking
+OFFSET = 7  # removes Jamey's speaking
 AUDIO_FILEPATH = Path("../data/audio")
 SAX_MIDI_FILEPATH = Path("../data/midi/saxophone")
 PIANO_MIDI_FILEPATH = Path("../data/midi/piano")
@@ -26,14 +26,16 @@ PIANO_MIDI_FILEPATH = Path("../data/midi/piano")
 def main():
     audio_ins = list(AUDIO_FILEPATH.rglob("**/*.m4a"))
     if len(audio_ins) == 0:
-        raise ValueError("No audio files found. Ensure you've downloaded these and extracted to aeberscale/evaluation/data/audio")
+        raise ValueError(
+            "No audio files found. Ensure you've downloaded these and extracted to aeberscale/evaluation/data/audio"
+        )
 
     basic_pitch_model = Model(ICASSP_2022_MODEL_PATH)
 
     for audio_in in audio_ins:
         # Load up audio, split channels
         #  Kong audio needs different sample rate
-        y, _ = librosa.load(audio_in, mono=False, sr=SAMPLE_RATE)
+        y, _ = librosa.load(audio_in, mono=False, sr=SAMPLE_RATE, offset=OFFSET)
         y_sax = y[0, :]
         y_piano = librosa.resample(y[1, :], orig_sr=SAMPLE_RATE, target_sr=kong_sr)
 
