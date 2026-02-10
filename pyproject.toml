@@ -22,6 +22,7 @@ packages = [
 python = ">=3.10,<3.13"
 torch = "^2.10.0"
 setuptools = "^82.0.0"
+rapidfuzz = "^3.14.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
@@ -38,6 +39,7 @@ basic-pitch = "*"
 piano_transcription_inference = "*"
 pretty-midi = "*"
 numpy = "1.26.4"
+levenshtein = "*"
 
 [build-system]
 requires = ["poetry-core"]
