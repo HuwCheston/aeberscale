@@ -42,8 +42,8 @@ NOTE_NUMBERS = {
 }
 
 
-def rotate(l: List[int], n: int) -> List[int]:
+def rotate(l_: List[int], n: int) -> List[int]:
     """
     Rotate a given list of integers `l` by `n` number of places
     """
-    return l[-n:] + l[:-n]
+    return l_[-n:] + l_[:-n]

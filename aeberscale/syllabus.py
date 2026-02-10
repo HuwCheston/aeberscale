@@ -26,7 +26,6 @@ class Scale:
             raise ValueError(f"Expected `root` to be a string, but got {type(root)}")
         elif not root.lower() in [n.lower() for n in NOTE_NAMES.keys()]:
             raise ValueError(f"Root note {root} is invalid (must be one of {', '.join(NOTE_NAMES.keys())}")
-        
         self.root = root
         self.root_number = NOTE_NAMES[root]
 

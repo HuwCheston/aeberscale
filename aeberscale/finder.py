@@ -18,10 +18,10 @@ The process is as follows:
 """
 
 import math
-from typing import List, Type, Union, Optional
+from typing import List, Optional, Type, Union
 
-from deep_pianist_identification.aeberscale import Scale, SCALE_SYLLABUS
-from deep_pianist_identification.aeberscale.utils import NOTE_NAMES, NOTE_NUMBERS
+from aeberscale import SCALE_SYLLABUS, Scale
+from aeberscale.utils import NOTE_NAMES, NOTE_NUMBERS
 
 
 def pearsonr(x: List[Union[float, int]], y: List[Union[float, int]]) -> Optional[float]:
