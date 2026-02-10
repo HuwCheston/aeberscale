@@ -17,7 +17,7 @@ install:
 
 tests:
 	poetry run flake8 aeberscale --count --select=E9,F63,F7,F82 --show-source --statistics
-	poetry run pytest -n 1 -vv --cov-branch --cov-report term-missing --cov-report=xml --cov=aeberscale tests --reruns 3 --reruns-delay 5 --random-order
+	poetry run pytest tests
 
 fix:
 	poetry run pre-commit install
