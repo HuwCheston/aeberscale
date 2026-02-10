@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aeberscale"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple key-finding algorithm designed for jazz"
 authors = ["Huw Cheston <h.cheston@qmul.ac.uk>"]
 license = "MIT"
@@ -17,12 +17,12 @@ readme = "README.md"
 packages = [
     { include = "aeberscale/*", format=["sdist", "wheel"]}
 ]
+exclude = [
+    "evaluation/**",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-torch = "^2.10.0"
-setuptools = "^82.0.0"
-rapidfuzz = "^3.14.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "*"
@@ -40,6 +40,9 @@ piano_transcription_inference = "*"
 pretty-midi = "*"
 numpy = "1.26.4"
 levenshtein = "*"
+torch = "^2.10.0"
+setuptools = "^82.0.0"
+rapidfuzz = "^3.14.3"
 
 [build-system]
 requires = ["poetry-core"]
