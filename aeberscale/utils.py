@@ -5,8 +5,6 @@
 Utility functions and classes for Aeberscale scale finder
 """
 
-from typing import List
-
 NOTE_NAMES = {
     "C": 0,
     "C#": 1,
@@ -40,10 +38,3 @@ NOTE_NUMBERS = {
     10: "A#",
     11: "B",
 }
-
-
-def rotate(l_: List[int], n: int) -> List[int]:
-    """
-    Rotate a given list of integers `l` by `n` number of places
-    """
-    return l_[-n:] + l_[:-n]

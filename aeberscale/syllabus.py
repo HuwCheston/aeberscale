@@ -58,7 +58,7 @@ class Scale:
                 raise ValueError(
                     f"Note number must be below 12, but got {note_name_or_number}"
                 )
-            elif note_name_or_number < -1:
+            elif note_name_or_number <= -1:
                 raise ValueError(
                     f"Note number must be above 0, but got {note_name_or_number}"
                 )
@@ -84,7 +84,7 @@ class Scale:
                 return matches[0]
 
         else:
-            raise ValueError(
+            raise TypeError(
                 f"Expected either str or int, but got {type(note_name_or_number)}"
             )
 
@@ -98,7 +98,7 @@ class Scale:
         return self.n_notes
 
     def notes_to_diatonic_scale_steps(self, notes: List[Union[str, int]]) -> List[int]:
-        if all(isinstance(n, (str, int)) for n in notes):
+        if isinstance(notes, (list, tuple, set)) and all(isinstance(n, (str, int)) for n in notes):
             return [self[g] for g in notes]
         else:
             raise TypeError("Expected input to be either a list of strings or integers")
