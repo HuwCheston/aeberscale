@@ -47,8 +47,8 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          poetry install
+          make install
 
       - name: Style check + run tests
         run: |
-          poetry run pytest tests
+          make tests

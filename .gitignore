@@ -1,2 +1,4 @@
 *.mid
 /.idea
+/dist
+/*.egg-info
