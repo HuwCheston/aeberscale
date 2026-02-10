@@ -101,16 +101,3 @@ def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Sca
 
     # get the overall best match and return the Scale instance
     return max(all_scale_res, key=lambda x: x.corr)
-
-
-if __name__ == "__main__":
-    from pretty_midi import PrettyMIDI
-
-    pm = PrettyMIDI(
-        "../../data/raw/pijama/evansb-likesomeoneinlove-unaccompanied-xxxx-awtxq598/piano_midi.mid"
-    )
-    nots = [p.pitch for p in pm.instruments[0].notes]
-    durs = [p.duration for p in pm.instruments[0].notes]
-
-    out = find_scale(nots, durs)
-    pass
