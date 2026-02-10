@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Utility functions and classes for Aeberscale scale finder
+"""
+
+from typing import List
+
+NOTE_NAMES = {
+    "C": 0,
+    "C#": 1,
+    "Db": 1,
+    "D": 2,
+    "D#": 3,
+    "Eb": 3,
+    "E": 4,
+    "F": 5,
+    "F#": 6,
+    "Gb": 6,
+    "G": 7,
+    "G#": 8,
+    "Ab": 8,
+    "A": 9,
+    "A#": 10,
+    "Bb": 10,
+    "B": 11,
+}
+NOTE_NUMBERS = {
+    0: "C",
+    1: "C#",
+    2: "D",
+    3: "D#",
+    4: "E",
+    5: "F",
+    6: "F#",
+    7: "G",
+    8: "G#",
+    9: "A",
+    10: "A#",
+    11: "B",
+}
+
+
+def rotate(l: List[int], n: int) -> List[int]:
+    """
+    Rotate a given list of integers `l` by `n` number of places
+    """
+    return l[-n:] + l[:-n]

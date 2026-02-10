@@ -1,0 +1,2 @@
+from deep_pianist_identification.aeberscale.syllabus import Scale, SCALE_SYLLABUS
+from deep_pianist_identification.aeberscale.finder import find_scale

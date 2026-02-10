@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "aeberscale"
+version = "0.1"
+description = "A simple key-finding algorithm designed for jazz"
+authors = ["Huw Cheston <h.cheston@qmul.ac.uk>"]
+license = "MIT"
+homepage = "https://github.com/HuwCheston/aeberscale"
+repository = "https://github.com/HuwCheston/aeberscale"
+keywords = ["jazz", "music information retrieval"]
+classifiers = [
+    "Programming Language :: Python",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+]
+readme = "README.md"
+packages = [
+    { include = "aeberscale/*", format=["sdist", "wheel"]}
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+pytest = "*"
+pre-commit = "*"
+black = "*"
+isort = "*"
+flake8 = "*"
+twine = "*"
+build = "*"
