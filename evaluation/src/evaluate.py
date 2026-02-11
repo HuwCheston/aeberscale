@@ -8,8 +8,10 @@ Evaluate aeberscale performance using transcribed piano + saxophone MIDI files
 import random
 from pathlib import Path
 
+import numpy as np
 from pretty_midi import PrettyMIDI
 from rapidfuzz.distance import Levenshtein
+from tqdm import tqdm
 
 from aeberscale import NOTE_NAMES, find_scale
 from aeberscale.syllabus import (
@@ -77,6 +79,58 @@ MAX_VELOCITY = 127
 # number of bootstrap iterations per item
 N_BOOTS = 1000
 
+# Window parameters: set WINDOW_SIZE == None to disable windowing
+WINDOW_SIZE = 5.0  # average JTD tempo == 194 BPM, this is duration of 4 bars of 4/4 (most common time signature)
+HOP_SIZE = 5.0  # non-overlapping windows
+MAX_NOTES = 64  # average number of notes contained across sliding window of 4 bars for all JTD tracks (63.98224943487665)
+
+
+def window_notes(all_notes: list) -> list[list]:
+    # If we don't have enough notes to create a window, just return
+    if len(all_notes) < MAX_NOTES:
+        return [all_notes]
+
+    # First, get starting times for all windows
+    end_sec = round(max(all_notes, key=lambda x: x.end).end)
+    windows = np.arange(0, end_sec, HOP_SIZE)
+    all_windows = []
+
+    # Iterate over all starting times
+    for window_start in windows:
+        # Get notes contained in this window
+        window_end = window_start + WINDOW_SIZE
+        windowed_notes = [
+            i for i in all_notes if i.start >= window_start and i.end <= window_end
+        ]
+
+        # Too many notes: truncate, keeping earliest notes only
+        if len(windowed_notes) >= MAX_NOTES:
+            windowed_notes = windowed_notes[:MAX_NOTES]
+
+        # Not enough notes: grab notes from before the start of the window and keep appending until we have enough
+        elif len(windowed_notes) < MAX_NOTES:
+            outside_window = [i for i in all_notes if i.start < window_start]
+            outside_sort = list(reversed(sorted(outside_window, key=lambda x: x.end)))
+            extra_notes = outside_sort[: MAX_NOTES - len(windowed_notes)]
+            windowed_notes = extra_notes + windowed_notes
+
+        # Sort by onset time
+        windowed_notes = sorted(windowed_notes, key=lambda x: x.start)
+
+        # Little check that we have enough notes in the window
+        if not len(windowed_notes) == MAX_NOTES:
+            print(
+                f"Not enough notes in window (expected {MAX_NOTES}, got {len(windowed_notes)})"
+            )
+            continue
+
+        all_windows.append(windowed_notes)
+
+    if len(all_windows) > 0:
+        return all_windows
+    else:
+        return [all_notes]
+
 
 def preprocess_midi(sax_path: Path, piano_path: Path) -> list:
     # load up all notes, remove any out of range/duration
@@ -110,7 +164,9 @@ def preprocess_midi(sax_path: Path, piano_path: Path) -> list:
     ]
 
     # combine both notes together and sort by onset time
-    return sorted(sax_notes + piano_notes, key=lambda x: x.start)
+    all_notes = sorted(sax_notes + piano_notes, key=lambda x: x.start)
+
+    return all_notes
 
 
 def score(expected_scale: Scale, actual_scale: Scale) -> float:
@@ -166,26 +222,41 @@ def main():
     res = []
     boot_res = []
 
-    for desired_track, expected_scale in GROUND_TRUTH.items():
+    total_dur = 0
+    total_notes = 0
+
+    for desired_track, expected_scale in tqdm(
+        GROUND_TRUTH.items(), desc="Processing tracks..."
+    ):
         sax_path = SAX_ROOT / f"{desired_track}.mid"
         piano_path = PIANO_ROOT / f"{desired_track}.mid"
 
         # load up all notes, remove any out of range/duration
         all_notes = preprocess_midi(sax_path, piano_path)
 
+        # increase counters
+        total_dur += max(all_notes, key=lambda x: x.end).end
+        total_notes += len(all_notes)
+
+        # split into windows
+        all_note_windows = (
+            [all_notes] if WINDOW_SIZE is None else window_notes(all_notes)
+        )
+
         # convert into format required for aeberscale
-        all_pitches = [n.pitch for n in all_notes]
-        all_durs = [n.duration for n in all_notes]
+        for all_notes in all_note_windows:
 
-        # find the scale
-        found = find_scale(all_pitches, all_durs)
+            all_pitches = [n.pitch for n in all_notes]
+            all_durs = [n.duration for n in all_notes]
 
-        # score the scale
-        scale_score = jaccard_score(expected_scale, found)
-        res.append(scale_score)
+            # find the scale
+            found = find_scale(all_pitches, all_durs)
 
-        # bootstrapping
-        for _ in range(N_BOOTS):
+            # score the scale
+            scale_score = jaccard_score(expected_scale, found)
+            res.append(scale_score)
+
+            # bootstrapping: choose a random scale for this window
             random_scale = random.choice(SCALE_SYLLABUS)
             random_root = random.choice(list(NOTE_NAMES.keys()))
             random_init = random_scale(root=random_root)
@@ -193,8 +264,10 @@ def main():
             # score this bootstrap iteration
             boot_res.append(jaccard_score(expected_scale, random_init))
 
-    print("Final score: ", sum(res) / len(GROUND_TRUTH))
-    print("Baseline score: ", sum(boot_res) / (len(GROUND_TRUTH) * N_BOOTS))
+    print("Total duration (s): ", total_dur)
+    print("Total notes: ", total_notes)
+    print("Final score and SD: ", np.mean(res), np.std(res))
+    print("Baseline score and SD: ", np.mean(boot_res), np.std(boot_res))
 
 
 if __name__ == "__main__":
