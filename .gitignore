@@ -2,3 +2,7 @@
 /.idea
 /dist
 /*.egg-info
+
+*.m4a
+*.wav
+*.zip

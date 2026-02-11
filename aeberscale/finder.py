@@ -54,7 +54,25 @@ def pearsonr(x: List[Union[float, int]], y: List[Union[float, int]]) -> Optional
     return diffprod / math.sqrt(xdiff2 * ydiff2)
 
 
-def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Scale]:
+def find_scale(
+    notes: List[Union[str, int]],
+    durations: List[float],
+) -> Type[Scale]:
+    """
+    Given a list of notes and durations, find the scale using the AeberScale algorithm.
+
+    The list of notes must be a list of note names (str) or numbers (int). In the case of strings, these can contain
+    register/octave numbers, but must be formatted with # for sharp and b for flat (e.g., "D#5", "Db2", "D" are OK).
+    In the case of integers, these can be MIDI note numbers or lie within the range 0 -> 11.
+
+    Every note must have an equivalent duration within the `durations` list, otherwise an error will be raised. This
+    should probably be measured in seconds, although in theory any duration value (e.g., fractions, from a score) can
+    be used as long as you are consistent.
+
+    In order to break ties for rotationally equivalent scales (e.g., modes of the major scale), we consider whichever
+    note was held for the longest amount of time to be the root.
+    """
+
     if len(notes) == 0 or len(durations) == 0:
         raise ValueError("Cannot find scale for passage with zero notes!")
 
@@ -69,7 +87,10 @@ def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Sca
 
     # String inputs: need to coerce to numbers
     elif all(isinstance(n, str) for n in notes):
-        notes = [NOTE_NAMES[n.title()] for n in notes]
+        notes = [
+            NOTE_NAMES["".join(n_ for n_ in n.title() if not n_.isdigit())]
+            for n in notes
+        ]
 
     # Apply modulo operator to all note numbers
     notes_mod = [n % 12 for n in notes]
@@ -99,5 +120,23 @@ def find_scale(notes: List[Union[str, int]], durations: List[float]) -> Type[Sca
         # store the maximum correlation for this scale type
         all_scale_res.append(max(scale_res, key=lambda x: x.corr))
 
-    # get the overall best match and return the Scale instance
-    return max(all_scale_res, key=lambda x: x.corr)
+    # get the overall best match by correlation
+    best_match = max(all_scale_res, key=lambda x: x.corr)
+    matching_corrs = [i for i in all_scale_res if i.corr == best_match.corr]
+
+    # If this scale is rotationally equivalent to at least one other
+    if (
+        len(best_match.get_rotationally_equivalent_instances()) > 0
+        and len(matching_corrs) > 0
+    ):
+
+        # break ties by choosing note with longest duration
+        longest_held = NOTE_NUMBERS[max(res, key=res.get)]
+        try:
+            best_match = [i for i in matching_corrs if i.root == longest_held][0]
+        except IndexError:
+            pass
+
+        # alternate method: collapse to parent mode (e.g., lydian/mixolydian -> major)
+
+    return best_match
